@@ -28,7 +28,8 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "2.0.7_DW7.3.1"
+//#define SHORT_BUILD_VERSION "2.0.7_DW7.3.1"
+#define SHORT_BUILD_VERSION "2.0.7_DW7.3.1_SK_1"
 
 /**
  * Verbose version identifier which should contain a reference to the location
@@ -153,6 +154,10 @@
 #elif ENABLED(MachineCR2020)
   #define CUSTOM_MACHINE_NAME "TM3D 2020"
 #endif
+
+// Override the prior, set string for modded machine
+#undef CUSTOM_MACHINE_NAME
+#define CUSTOM_MACHINE_NAME "TM3D CR-X Pro/Chimera+"
 
 /**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source

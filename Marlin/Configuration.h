@@ -15,7 +15,7 @@
 //#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
-//#define MachineCRXPro
+#define MachineCRXPro
 //#define MachineCR10Max
 //#define MachineS4
 //#define MachineS5
@@ -51,7 +51,7 @@
    Creality Mounting assumes bolt-on kit
 */
 //#define HotendStock
-//#define HotendE3D
+#define HotendE3D
 //#define HotendMosquito
 
 //Enable this if you have an all metal hotend capable of 300c
@@ -191,7 +191,7 @@
 
   //#define Dual_BowdenSplitterY
   //#define Dual_CyclopsSingleNozzle
-  //#define Dual_ChimeraDualNozzle
+#define Dual_ChimeraDualNozzle
 
 //#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 
@@ -457,7 +457,10 @@
 
 #if ENABLED(MachineCRX)
   #define MachineCR10Std
-  #define Dual_BowdenSplitterY
+  // Only set splitter conf if no Chimera is configured
+  #if(DISABLED(Dual_ChimeraDualNozzle))
+    #define Dual_BowdenSplitterY
+  #endif
   #if NONE(BedAC, BedDC)
     #define BedDC
   #endif
@@ -812,7 +815,9 @@
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
 // For the other hotends it is their distance from the extruder 0 hotend.
 #if(ENABLED(Dual_ChimeraDualNozzle))
-  #define HOTEND_OFFSET_X {0.0, 18.00} // (in mm) for each extruder, offset of the hotend on the X axis
+  //#define HOTEND_OFFSET_X {0.0, 18.00} // (in mm) for each extruder, offset of the hotend on the X axis
+  // Nozzle offset for Chimera+ is 20mm, see https://e3d-online.dozuki.com/Document/p3XA6cEBbARPEHkt/CYC-CHI-PLUS-ALL.pdf
+  #define HOTEND_OFFSET_X {0.0, 20.00}
   #define HOTEND_OFFSET_Y {0.0, 0.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 #endif
 //#define HOTEND_OFFSET_Z {0.0, 0.00}  // (mm) relative Z-offset for each nozzle
@@ -1033,6 +1038,19 @@
 #define HEATER_7_MAXTEMP 275
 #define BED_MAXTEMP      150
 #define CHAMBER_MAXTEMP  60
+
+// Set max temps per Chimera documentation
+#if(ENABLED(Dual_ChimeraDualNozzle))
+#undef HEATER_0_MAXTEMP
+#undef HEATER_1_MAXTEMP
+//#define HEATER_0_MAXTEMP 285
+//#define HEATER_1_MAXTEMP 285
+
+// Only for hot-tightening, see
+// https://e3d-online.dozuki.com/Guide/Chimera++Aircooled+Assembly/73?lang=en#s153
+#define HEATER_0_MAXTEMP 300
+#define HEATER_1_MAXTEMP 300
+#endif
 
 /**
  * Thermal Overshoot
@@ -1907,6 +1925,7 @@
       #define NOZZLE_TO_PROBE_OFFSET { 63, 5, 0 }
     #endif
   #else
+    // xxx Need to measure and set this for the modded mount
     #define NOZZLE_TO_PROBE_OFFSET { 32, 5, 0 }
   #endif
 #endif
@@ -2879,7 +2898,10 @@
  * Attention: EXPERIMENTAL. G-code arguments may change.
  */
 #if ANY(MachineCRX, PurgeBucket)
-  #define NOZZLE_CLEAN_FEATURE
+  // Don't enable for dual nozzle mod
+  #if(DISABLED(Dual_ChimeraDualNozzle))
+    #define NOZZLE_CLEAN_FEATURE
+  #endif
 #endif
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   // Default number of pattern repetitions
